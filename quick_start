@@ -1,0 +1,4 @@
+#!/bin/bash
+
+./start/start_daemon
+./start/start_server

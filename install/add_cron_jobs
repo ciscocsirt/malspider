@@ -1,0 +1,25 @@
+#!/bin/bash
+
+FAILURE=$(tput setaf 1)
+SUCCESS=$(tput setaf 2)
+INFO=$(tput setaf 3)
+WARNING=$(tput setaf 4)
+END=$(tput sgr0)
+
+cd ../
+
+scheduler="@daily python $PWD/malspider_django/malspider_django/manage.py manage_spiders"
+analyzer="@daily python $PWD/malspider_django/malspider_django/manage.py analyzer"
+purge="#0 0 1 * * python $PWD/malspider_django/malspider_django/manage.py purge_db"
+
+printf "${INFO}Adding the following entries to your crontab...${END}\n"
+printf "${INFO}$scheduler${END}\n"
+printf "${INFO}$analyzer${END}\n"
+printf "${INFO}$purge${END}\n"
+
+crontab -l > tempcron
+echo "$scheduler"  >> tempcron
+echo "$analyzer" >> tempcron
+echo "$purge" >> tempcron
+crontab tempcron
+rm tempcron

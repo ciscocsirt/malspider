@@ -1,0 +1,45 @@
+#!/bin/bash
+
+FAILURE=$(tput setaf 1)
+SUCCESS=$(tput setaf 2)
+INFO=$(tput setaf 3)
+WARNING=$(tput setaf 4)
+END=$(tput sgr0)
+
+install_dependencies() 
+{
+	printf "${INFO}Attempting to install dependencies...${END}\n"
+
+	dist=`grep '^ID=' /etc/*-release | awk -F '=' '{print $2}'`
+	if [ "$dist" = "ubuntu" ] || [ "$dist" = "\"ubuntu\"" ]; then
+		sudo apt-get -y install python-pip python-dev libssl-dev libxml2-dev libxslt-dev libmysqlclient-dev libffi-dev libtool autoconf phantomjs
+	elif [ "$dist" = "centos" ] || [ "$dist" = "\"centos\"" ]; then
+		sudo yum groupinstall "Development Tools"
+		sudo yum -y install python-pip python-devel openssl-devel libxml2-devel libxslt-devel libffi-devel libtool autoconf gcc gcc-c++ make flex bison gperf ruby freetype-devel fontconfig-devel libicu-devel sqlite-devel libpng-devel libjpeg-devel
+
+		sudo yum install freetype fontconfig
+		wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2
+		bunzip2 phantomjs*.tar.bz2
+		tar xvf phantomjs*.tar
+		sudo cp phantomjs*/bin/phantomjs /usr/bin/phantomjs
+	fi
+	
+	sudo pip install -r requirements.txt
+	if [ $? -ne 0 ]
+	then
+		printf "${FAILURE}Failed to install dependencies!${END}\n"
+		exit
+	else
+		BUILD_LIB=1 pip install ssdeep
+		if [ $? -ne 0 ]
+		then
+			printf "${FAILURE}Failed to install dependencies!${END}\n"
+			exit
+		fi
+		printf "${SUCCESS}Successfully installed dependencies!${END}\n"
+	fi
+	printf "\n\n"
+
+}
+
+install_dependencies

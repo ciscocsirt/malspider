@@ -1,0 +1,26 @@
+#!/bin/bash
+
+FAILURE=$(tput setaf 1)
+SUCCESS=$(tput setaf 2)
+INFO=$(tput setaf 3)
+WARNING=$(tput setaf 4)
+END=$(tput sgr0)
+
+
+create_iptables_rules()
+{
+        printf "${INFO}Attempting to lockdown port 6800 using iptables..\n${END}"
+	sudo iptables -A INPUT ! -s 127.0.0.1 -p tcp -m tcp --dport 6802 -j DROP
+        if [ $? -ne 0 ]
+        then
+                printf "${WARNING}WARNING! Unable to create iptables rule to drop traffic to port 6800!\n${END}"
+        else
+                printf "${SUCCESS}SUCCESS! Created iptables rule to drop traffic to port 6800!\n${END}"
+        fi
+
+	#uncomment if you want to explicitly open 8080
+	#sudo iptables -A INPUT -p tcp --dport 8080 -j ACCEPT
+       
+}
+
+create_iptables_rules

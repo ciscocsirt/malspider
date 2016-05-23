@@ -1,0 +1,24 @@
+#!/bin/bash
+
+FAILURE=$(tput setaf 1)
+SUCCESS=$(tput setaf 2)
+INFO=$(tput setaf 3)
+WARNING=$(tput setaf 4)
+END=$(tput sgr0)
+
+start_scrapy_daemon()
+{
+	printf "${INFO}Attempting to start scrapy daemon...${END}\n"
+
+	scrapyd &
+	if [ $? -ne 0 ]
+	then
+		printf "${FAILURE}Error starting scrapyd! Try running 'scrapyd' manually.${END}\n"
+		exit
+	fi
+	
+	printf "${INFO}Attempting to deploy web spider project to the scrapy daemon...${END}\n"
+	scrapyd-deploy
+}
+
+start_scrapy_daemon

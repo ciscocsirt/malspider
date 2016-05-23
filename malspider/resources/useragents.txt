@@ -1,0 +1,5 @@
+Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)
+Mozilla/5.0 (Windows; U; MSIE 9.0; Windows NT 9.0; en-US)
+Mozilla/4.0 (Compatible; MSIE 8.0; Windows NT 5.1; Trident/6.0)
+Mozilla/5.0 (Windows; U; MSIE 7.0; Windows NT 5.2)
+Mozilla/4.08 (compatible; MSIE 6.0; Windows NT 5.1)

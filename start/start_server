@@ -1,0 +1,16 @@
+#!/bin/bash
+
+FAILURE=$(tput setaf 1)
+SUCCESS=$(tput setaf 2)
+INFO=$(tput setaf 3)
+WARNING=$(tput setaf 4)
+END=$(tput sgr0)
+
+
+start_django_server() 
+{
+	printf "Attempting to start runserver...\n"
+	python malspider_django/manage.py runserver 0.0.0.0:8080
+}
+
+start_django_server

@@ -1,0 +1,29 @@
+#!/bin/bash
+
+FAILURE=$(tput setaf 1)
+SUCCESS=$(tput setaf 2)
+INFO=$(tput setaf 3)
+WARNING=$(tput setaf 4)
+END=$(tput sgr0)
+
+
+create_django_admin_user()
+{
+        printf "${INFO}Please create a new user for the django admin (web) interface. This is separate from your database user and is used to add/remove/edit web crawler settings from the web interface.${END}\n"
+        python ../malspider_django/manage.py createsuperuser
+        if [ $? -ne 0 ]
+        then
+                printf "${FAILURE}Failed to create django admin user!${END}\n"
+                printf "${INFO}Would you like to continue and create an admin user later?${END}\n"
+                read -p "Y/N: " answer
+                if [ "$answer" != "Y" ] && [ "$answer" != "y" ]
+                then
+                        exit
+                fi
+        else
+                printf "${SUCCESS}Successfully created django admin user!${END}\n"
+        fi
+        printf "\n\n"
+}
+
+create_django_admin_user

@@ -1,0 +1,27 @@
+#!/bin/bash
+
+FAILURE=$(tput setaf 1)
+SUCCESS=$(tput setaf 2)
+INFO=$(tput setaf 3)
+WARNING=$(tput setaf 4)
+END=$(tput sgr0)
+
+
+
+migrate_database()
+{
+        printf "${INFO}Attempting to apply django migrations...${END}\n"
+	key="$(python ../malspider_django/manage.py gen_key)"
+        sed -i.back "s/<REPLACE_THIS_DUMMY_KEY>/${key}/g;" ../malspider_django/malspider_django/settings.py
+	python ../malspider_django/manage.py migrate
+        if [ $? -ne 0 ]
+        then
+                printf "${FAILURE}Failed to apply django migrations!${END}\n"
+                exit
+        else
+                printf "${SUCCESS}Successfully applied django migrations!${END}\n"
+        fi
+        printf "\n\n"
+}
+
+migrate_database

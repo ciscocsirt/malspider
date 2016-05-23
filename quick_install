@@ -1,0 +1,73 @@
+#!/bin/bash
+
+FAILURE=$(tput setaf 1)
+SUCCESS=$(tput setaf 2)
+INFO=$(tput setaf 3)
+WARNING=$(tput setaf 4)
+END=$(tput sgr0)
+
+cd install/
+
+printf "${SUCCESS} ========= STEP 1/6: Install Database ========= ${END}\n"
+printf "${INFO}Installs the malspider database and creates a new database user.${END}\n"
+printf "${INFO}Press enter to begin or type 's' to skip this step...${END}"
+read input
+if [ "$input" != "s" ]
+then
+	printf "${INFO}A new mysql user must be created. Please enter the credentials you would like to use below:${END}\n"
+	printf "Username: "
+	read username
+	printf "Password: "
+	stty -echo
+	read password
+	stty echo
+	printf "\n"
+	./install_database $username $password
+fi
+
+printf "${SUCCESS} ========= STEP 2/6: Install dependencies ========= ${END}\n"
+printf "${INFO}Installs required packages and dependencies. If any of the dependencies fail to install, please install them manually.${END}\n"
+printf "${INFO}Press enter to begin or type "s" to skip this step...${END}"
+read input
+if [ "$input" != "s" ]
+then
+	sudo ./install_dependencies
+fi
+
+printf "${SUCCESS} ========= STEP 3/6: Apply Web App DB Migrations ========= ${END}\n"
+printf "${INFO}Applies django schema changes to the 'malspider' database.  If this step fails, please run python manage.py migrate manually.  You won't be able to complete step 4 without applying the migrations.${END}\n"
+printf "${INFO}Press enter to begin or type 's' to skip this step...${END}"
+read input
+if [ "$input" != "s" ]
+then
+	./apply_db_migrations
+fi
+
+printf "${SUCCESS} ========= STEP 4/6: Create Web App Admin User ========= ${END}\n"
+printf "${INFO}This step will prompt you for a username/password combination - these credentials will be used to login to the admin section of the web interface.${END}\n"
+printf "${INFO}Press enter to begin or type 's' to skip this step...${END}"
+read input
+if [ "$input" != "s" ]
+then
+	./create_web_admin
+fi
+
+printf "${SUCCESS} ========= STEP 5/6: Apply Access Control ========= ${END}\n"
+printf "${INFO}Creates port access rules using iptables. Port 6802 should only be accessible to localhost. Port 8080 needs to be open for the web interface.${END}\n"
+printf "${INFO}Press enter to begin or type 's' to skip this step...${END}"
+read input
+if [ "$input" != "s" ]
+then
+	./create_iptables_rules
+fi
+
+printf "${SUCCESS} ========= STEP 6/6: Add Scheduled Jobs to crontab ========= ${END}\n"
+printf "${INFO}Schedules regular cron jobs for sending jobs to the crawler, analyzing crawl data, and purging the database. ${END}\n"
+printf "${INFO}Press enter to begin or type 's' to skip this step...${END}"
+read input
+if [ "$input" != "s" ]
+then
+	./add_cron_jobs
+fi
+
+printf "${SUCCESS}Installation finished! Please refer to the instructions for next steps!${END}\n" 

@@ -1,0 +1,40 @@
+#!/bin/bash
+EXPECTED_ARGS=2
+
+FAILURE=$(tput setaf 1)
+SUCCESS=$(tput setaf 2)
+INFO=$(tput setaf 3)
+WARNING=$(tput setaf 4)
+END=$(tput sgr0)
+
+DBNAME='malspider'
+
+if [ "$#" -ne 2 ]
+then
+	printf "${INFO}Usage: dbsetup <user> <password>${END}\n"
+	printf "${WARNING}<user>:${END}${INFO} username for the new user to be created${END}\n"
+	printf "${WARNING}<password$:${END}${INFO} password for the new user to be created${END}\n"
+	exit
+else
+	printf "${WARNING}You will be prompted for the root *mysql* credentials.${END}\n"
+	USER=$1
+	PASS=$2
+	q1="CREATE DATABASE IF NOT EXISTS ${DBNAME};"
+	q2="CREATE USER '${USER}'@'localhost' IDENTIFIED BY '${PASS}';"
+	q3="GRANT ALL PRIVILEGES ON ${DBNAME}.* TO '${USER}'@'localhost';"
+	q4="USE ${DBNAME};"
+	q5="SOURCE malspider_schema.sql;"
+	sql="${q1}${q2}${q3}${q4}${q5}"
+
+	mysql -u root -p -e "$sql"
+	if [ $? -ne 0 ]
+	then
+		printf "${FAILURE}Database installation failed!${END}\n"
+		exit
+	else
+		printf "${SUCCESS}Successfully installed database!${END}\n"
+	fi
+
+	sed -i.back "s/<username>/${USER}/g;s/<password>/${PASS}/g" ../malspider/settings.py	
+	sed -i.back "s/<username>/${USER}/g;s/<password>/${PASS}/g" ../malspider_django/malspider_django/settings.py
+fi
