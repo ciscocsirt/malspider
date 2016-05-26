@@ -8,9 +8,9 @@ END=$(tput sgr0)
 
 cd ../
 
-scheduler="@daily python $PWD/malspider_django/malspider_django/manage.py manage_spiders"
-analyzer="@daily python $PWD/malspider_django/malspider_django/manage.py analyzer"
-purge="#0 0 1 * * python $PWD/malspider_django/malspider_django/manage.py purge_db"
+scheduler="@daily python $PWD/malspider_django/manage.py manage_spiders"
+analyzer="@daily python $PWD/malspider_django/manage.py analyzer"
+purge="#0 0 1 * * python $PWD/malspider_django/manage.py purge_db"
 
 printf "${INFO}Adding the following entries to your crontab...${END}\n"
 printf "${INFO}$scheduler${END}\n"
