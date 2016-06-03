@@ -2,9 +2,16 @@ from django.contrib import admin
 from dashboard.models import Organization
 from dashboard.models import Alert
 from dashboard.models import Whitelist
+from import_export.admin import ImportExportModelAdmin
+from import_export import resources
 
-class OrganizationAdmin(admin.ModelAdmin):
-    model = Organization
+class OrganizationResource(resources.ModelResource):
+    class Meta:
+        model = Organization
+        import_id_fields = ['id',]
+
+class OrganizationAdmin(ImportExportModelAdmin):
+    resource_class = OrganizationResource
     list_display = ('get_domain','get_org','get_category')
 
 class AlertAdmin(admin.ModelAdmin):
