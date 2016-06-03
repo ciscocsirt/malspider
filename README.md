@@ -77,6 +77,13 @@ Add websites to crawl by navigating to the administrative panel @ http://0.0.0.0
  - domain (ie. cisco.com)
  - industry/org category (ie. Energy, Political, Education, etc)
 
+If you want to **bulk import** domains, create a csv file with a the following header and leave the first column blank (the id field):
+
+id,org_name,category,domain
+,Cisco Systems,Technology,cisco.com
+
+Click "IMPORT" instead of "ADD ORGANIZATION".
+
 **NOTE**: _Websites are scheduled to be **crawled once every 24 hours** (at midnight) by a cronjob. If you want to crawl your list of websites more often than that you can **edit the crontab entry** that looks like this: "0 * * * * python your_path/manage.py manage_spiders"_
 
 ### Analyzing Spider Data
@@ -136,6 +143,15 @@ TAKE_SCREENSHOT = False
 SCREENSHOT_LOCATION = '<full_file_path>'
 ```
 Set TAKE_SCREENSHOT to _True_ and change _full_file_path_ to where you want the screenshots to be stored.
+
+### Enable Email Address Detection
+Email address detection can generate a lot of alerts. In some cases this is not the intended or desired effect so this feature is turned off by default.
+
+To turn on email alerts, open malspider_django/malspider_django/settings.py and locate this line:
+
+ENABLE_EMAIL_ALERTS = False
+
+Change "False" to "True".
 
 
 ### Database Purging
