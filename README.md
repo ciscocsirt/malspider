@@ -79,7 +79,7 @@ Add websites to crawl by navigating to the administrative panel @ http://0.0.0.0
 
 If you want to **bulk import** domains, create a csv file with a the following header and leave the first column blank (the id field):
 
-id,org_name,category,domain
+id,org_name,category,domain<br />
 ,Cisco Systems,Technology,cisco.com
 
 Click "IMPORT" instead of "ADD ORGANIZATION".
