@@ -58,7 +58,7 @@ class Element(models.Model):
 
 class Alert(models.Model):
     def __unicode__(self):
-        return self.org + " --> " + self.reason
+        return self.reason + " --> " + self.raw
     class Meta:
         db_table = "alert"
         verbose_name = 'Alert'
@@ -93,7 +93,7 @@ class Alert(models.Model):
     get_page.short_description = "Found on Page"
 
     def get_org(self):
-        return self.org
+        return self.org_id
     get_org.short_description = "Organization"
 
 class Organization(models.Model):

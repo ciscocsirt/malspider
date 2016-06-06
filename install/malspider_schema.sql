@@ -120,16 +120,15 @@ CREATE TABLE `page` (
 --
 -- Table structure for table `whitelist`
 --
-
 DROP TABLE IF EXISTS `whitelist`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `whitelist` (
-  `pattern` int(11) NOT NULL,
-  `id` varchar(45) NOT NULL,
+  `pattern` varchar(255) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`id`),
   UNIQUE KEY `pattern_UNIQUE` (`pattern`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
