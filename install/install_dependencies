@@ -16,8 +16,9 @@ install_dependencies()
 	elif [ "$dist" = "centos" ] || [ "$dist" = "\"centos\"" ]; then
 		sudo yum groupinstall "Development Tools"
 		sudo yum -y install python-pip python-devel openssl-devel libxml2-devel libxslt-devel libffi-devel libtool autoconf gcc gcc-c++ make flex bison gperf ruby freetype-devel fontconfig-devel libicu-devel sqlite-devel libpng-devel libjpeg-devel
+		sudo yum install -y mariadb-devel
 
-		sudo yum install freetype fontconfig
+		sudo yum install -y freetype fontconfig
 		wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2
 		bunzip2 phantomjs*.tar.bz2
 		tar xvf phantomjs*.tar
