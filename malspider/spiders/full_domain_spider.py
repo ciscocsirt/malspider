@@ -78,9 +78,9 @@ class FullDomainSpider(CrawlSpider):
         yield page
 
         for link in LxmlLinkExtractor(unique=True).extract_links(response):
-            if not response.url in self.already_crawled:
+            if not link.url in self.already_crawled:
                 self.already_crawled.add(link.url)
                 yield WebdriverRequest(link.url, callback=self.parse_item)
             else:
-                print "avoiding request for: ", response.url
+                print "avoiding request for: ", link.url
 
