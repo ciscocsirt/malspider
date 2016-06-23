@@ -32,12 +32,16 @@ class Analyzer(object):
         if not uri:
             return False
 
+        if any(whitelist_str in uri for whitelist_str in self.custom_whitelist):
+            print "in custom whitelist!"
+            return True
+
         parsed_uri = urlparse(uri)
         parsed_domain = '{uri.netloc}'.format(uri=parsed_uri)
 
         try:
             domain = get_tld(uri)
-            if domain in self.alexa_whitelist or domain in self.custom_whitelist:
+            if domain in self.alexa_whitelist:
                 return True
         except Exception as e:
             print "error: ", str(e)
