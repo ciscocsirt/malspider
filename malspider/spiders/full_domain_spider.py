@@ -77,7 +77,7 @@ class FullDomainSpider(CrawlSpider):
 
         yield page
 
-        for link in LxmlLinkExtractor(unique=True).extract_links(response):
+        for link in LxmlLinkExtractor(unique=True, allow_domains=self.allowed_domains).extract_links(response):
             if not link.url in self.already_crawled:
                 self.already_crawled.add(link.url)
                 yield WebdriverRequest(link.url, callback=self.parse_item)
