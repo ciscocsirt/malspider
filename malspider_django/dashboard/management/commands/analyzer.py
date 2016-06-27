@@ -74,6 +74,8 @@ class Analyzer(object):
         alerts_nocheck["WEBSHELL INJECTION"] = self.get_shell_injections(search_start_time)
         alerts_nocheck["VBSCRIPT INJECTION"] = self.get_vbscript_injections(search_start_time)
         alerts_nocheck["EVERCOOKIE SCRIPT"] = self.get_evercookie_scripts(search_start_time)
+        alerts_nocheck["CLICKY"] = self.get_clicky(search_start_time)
+        
         for alert in alerts_nocheck:
             for elem in alerts_nocheck[alert]:
                 print elem.raw
@@ -97,12 +99,17 @@ class Analyzer(object):
         evercookie_script_regex = re.compile("evercookie", re.IGNORECASE)
         evercookie_uri_regex = re.compile("(evercookie_png.php)|(evercookie_etag.php)|(evercookie_cache.php)", re.IGNORECASE)
         evercookie_scripts = Element.objects.filter(Q(event_time__gte=search_start_time), Q(uri__regex=r'evercookie') | (Q(tag_name='script') & Q(uri__regex=evercookie_script_regex.pattern)))
-
         return evercookie_scripts
+        
     def get_cart_id_injections(self, search_start_time):
         cart_regex = re.compile("\\/\\?cart_id=[0-9]+$", re.IGNORECASE)
-        cart_elements = Element.objects.filter(Q(event_time__gte=search_start_time), Q(tag_name='script') | Q(tag_name='iframe'), Q(uri__regex=cart_regex))
+        cart_elements = Element.objects.filter(Q(event_time__gte=search_start_time), Q(tag_name='script') | Q(tag_name='iframe'), Q(uri__regex=cart_regex.pattern))
         return cart_elements
+        
+    def get_clicky(self, search_start_time):
+        clicky_regex = re.compile("clicky_site_ids", re.IGNORECASE | re.MULTILINE)
+        clicky_elements = Element.objects.filter(Q(event_time__gte=search_start_time), Q(tag_name='script'), Q(raw__regex=clicky_regex.pattern))
+        return clicky_elements
 
     def get_shell_injections(self, search_start_time):
         shell_regex = re.compile("(\/r57.php)|(r57shell)|(\/c99.php)|(c99shell)", re.IGNORECASE)
