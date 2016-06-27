@@ -24,6 +24,7 @@ from malspider.items import WebPage
 class FullDomainSpider(CrawlSpider):
     name = settings.BOT_NAME
     already_crawled = set()
+    pages_crawled = 0
 
     def __init__(self, *args, **kwargs):
         super(FullDomainSpider, self).__init__(*args, **kwargs)
@@ -77,10 +78,19 @@ class FullDomainSpider(CrawlSpider):
 
         yield page
 
-        for link in LxmlLinkExtractor(unique=True).extract_links(response):
-            if not response.url in self.already_crawled:
+        #limit page depth
+        if self.pages_crawled >= settings.PAGES_PER_DOMAIN:
+            return
+
+        for link in LxmlLinkExtractor(unique=True, allow_domains=self.allowed_domains).extract_links(response):
+            if not link.url in self.already_crawled and self.pages_crawled <= settings.PAGES_PER_DOMAIN:
                 self.already_crawled.add(link.url)
+                self.pages_crawled = self.pages_crawled + 1
+                print "yielding request for ", link.url
                 yield WebdriverRequest(link.url, callback=self.parse_item)
+            elif self.pages_crawled >= settings.PAGES_PER_DOMAIN:
+                print "reached max crawl"
+                return
             else:
-                print "avoiding request for: ", response.url
+                print "avoiding duplicate request for: ", link.url
 

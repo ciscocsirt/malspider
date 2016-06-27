@@ -59,3 +59,9 @@ MYSQL_HOST = 'localhost'
 MYSQL_DB = 'malspider'
 MYSQL_USER = '<username>'
 MYSQL_PASSWORD = '<password>'
+
+
+### Limit pages crawled per domain ###
+# 0 = crawl only the home page (start urls)
+# X = crawl X pages beyond the home page
+PAGES_PER_DOMAIN = 20

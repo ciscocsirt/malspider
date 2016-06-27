@@ -86,6 +86,19 @@ Click "IMPORT" instead of "ADD ORGANIZATION".
 
 **NOTE**: _Websites are scheduled to be **crawled once every 24 hours** (at midnight) by a cronjob. If you want to crawl your list of websites more often than that you can **edit the crontab entry** that looks like this: "0 * * * * python your_path/manage.py manage_spiders"_
 
+### Pages Per Domain
+By default, Malspider crawls 20 pages per domain. This can be changed. You can crawl as many pages as you like (per domain) or you can crawl only the homepage of each site.
+
+In the **malspider/settings.py** file you'll find a "PAGES_PER_DOMAIN" variable. Change this to your desired depth.
+
+```python
+### Limit pages crawled per domain ###
+# 0 = crawl only the home page (start urls)
+# X = crawl X pages beyond the home page
+PAGES_PER_DOMAIN = 20
+}
+```
+
 ### Analyzing Spider Data
 ----
 Malspider crawls websites and stores information about those sites in a database. The data in the database is post-processed and analyzed for potentially malicious characteristics. You can view results from the analyzer by simply viewing the dashboard and clicking on "View Alerts".
