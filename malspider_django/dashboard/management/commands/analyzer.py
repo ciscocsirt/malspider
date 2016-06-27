@@ -54,7 +54,6 @@ class Analyzer(object):
         alerts["HIDDEN ELEMENT"] = self.get_hidden_iframes(search_start_time)
         alerts["PROFILING SCRIPT"] = self.get_cart_id_injections(search_start_time)
         alerts["SCANBOX FRAMEWORK"] = self.get_scanbox_injections(search_start_time)
-        alerts_nocheck["CLICKY"] = self.get_clicky(search_start_time)
 
         for alert in alerts:
             for elem in alerts[alert]:
@@ -75,6 +74,8 @@ class Analyzer(object):
         alerts_nocheck["WEBSHELL INJECTION"] = self.get_shell_injections(search_start_time)
         alerts_nocheck["VBSCRIPT INJECTION"] = self.get_vbscript_injections(search_start_time)
         alerts_nocheck["EVERCOOKIE SCRIPT"] = self.get_evercookie_scripts(search_start_time)
+        alerts_nocheck["CLICKY"] = self.get_clicky(search_start_time)
+        
         for alert in alerts_nocheck:
             for elem in alerts_nocheck[alert]:
                 print elem.raw
