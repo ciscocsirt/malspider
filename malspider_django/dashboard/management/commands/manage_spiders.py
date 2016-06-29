@@ -26,13 +26,13 @@ class Command(BaseCommand):
             allowed_domains = ""
             start_urls = ""
             domain = org.domain
-
+            
             if "www." in domain:
                 allowed_domains = domain + "," + domain[4:]
-                start_urls = 'http://' + domain + ',http://' + domain[4:]
+                start_urls = 'http://' + domain + ',https://' + domain + ',http://' + domain[4:] + ',https://' + domain[4:]
             else:
                 allowed_domains = domain + ",www." + domain
-                start_urls = 'http://' + domain + ',http://www.' + domain
+                start_urls = 'http://' + domain + ',http://www.' + domain + ',https://www.' + domain + ',https://' + domain
 
             crawl_params = {
                     "org": org.id,
