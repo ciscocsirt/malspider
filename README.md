@@ -123,7 +123,7 @@ In **malspider/settings.py** change:
 ```python  
 WEBDRIVER_OPTIONS = {
                 'service_args': ['--debug=true', '--load-images=true', '--webdriver-loglevel=debug']
-#                'service_args': ['--debug=true', '--load-images=true', '--webdriver-loglevel=debug', '--proxy=<address>','--proxy-type=<http,sock5,etc>']
+#                'service_args': ['--debug=true', '--load-images=true', '--webdriver-loglevel=debug', '--proxy=<address>','--proxy-type=<http,socks5,etc>']
     
 }
 ```
@@ -132,7 +132,7 @@ to
 ```python
 WEBDRIVER_OPTIONS = {
 #                'service_args': ['--debug=true', '--load-images=true', '--webdriver-loglevel=debug']
-                 'service_args': ['--debug=true', '--load-images=true', '--webdriver-loglevel=debug', '--proxy=<address>','--proxy-type=<http,sock5,etc>']
+                 'service_args': ['--debug=true', '--load-images=true', '--webdriver-loglevel=debug', '--proxy=<address>','--proxy-type=<http,socks5,etc>']
     
 }
 ```
