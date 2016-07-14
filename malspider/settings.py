@@ -50,7 +50,7 @@ WEBDRIVER_BROWSER = 'PhantomJS'  # Or any other from selenium.webdriver
 # Optional passing of parameters to the webdriver
 WEBDRIVER_OPTIONS = {
                 'service_args': ['--debug=true', '--load-images=true', '--webdriver-loglevel=debug']
-#                'service_args': ['--debug=true', '--load-images=true', '--webdriver-loglevel=debug', '--proxy=<address>','--proxy-type=<http,sock5,etc>']
+#                'service_args': ['--debug=true', '--load-images=true', '--webdriver-loglevel=debug', '--proxy=<address>','--proxy-type=<http,socks5,etc>']
 
 }
 
