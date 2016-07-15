@@ -10,7 +10,7 @@ LOG_FILE='spider.log'
 #Handle ALL HTTP status codes, including those that are not valid (outside the 200-300 range)
 HTTPERROR_ALLOW_ALL = True
 
-REDIRECT_ENABLED = False
+REDIRECT_ENABLED = True
 
 ROBOTSTXT_OBEY = True
 
