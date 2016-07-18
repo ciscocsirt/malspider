@@ -12,7 +12,7 @@ HTTPERROR_ALLOW_ALL = True
 
 REDIRECT_ENABLED = True
 
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 #default useragent
 USER_AGENT = 'Mozilla/5.0 (Android; Tablet; rv:30.0) Gecko/30.0 Firefox/30.0'
@@ -35,7 +35,7 @@ DOWNLOAD_HANDLERS = {
 DOWNLOADER_MIDDLEWARES = {
         'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware': None,
         'malspider.middlewares.random_useragent.RandomUserAgentMiddleware': 100,
-        'scrapy.contrib.downloadermiddleware.robotstxt.RobotsTxtMiddleware': 200,
+#        'scrapy.contrib.downloadermiddleware.robotstxt.RobotsTxtMiddleware': 200,
 }
 
 SPIDER_MIDDLEWARES = {
