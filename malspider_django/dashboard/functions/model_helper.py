@@ -31,7 +31,7 @@ class ModelQuery:
 
     @staticmethod
     def get_pages_by_org(org_id):
-        all_pages = Page.objects.filter(org_id=org_id).distinct()
+        all_pages = Page.objects.filter(org_id=org_id).values('uri').distinct()
         return all_pages
 
     @staticmethod
