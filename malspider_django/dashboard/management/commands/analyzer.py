@@ -10,6 +10,7 @@ from urlparse import urlparse
 import re
 import sys
 import os
+import glob
 from tld import get_tld
 
 from django.db.models import Q
@@ -22,10 +23,53 @@ class Command(BaseCommand):
         A.generate_alerts(datetime.now() - timedelta(days=1))
 
 
+class Blacklists(object):
+    """ IP/domain blacklist storage and matching. """
+
+    def __init__(self):
+        self.blacklists = {}
+        self.discover_blacklists()
+
+    def discover_blacklists(self):
+        """ Load blacklists from files in configured directory, stores contents
+        in memory.
+        """
+        glob_pattern = os.path.join(settings.BLACKLIST_DIRECTORY, '*.blacklist')
+        for fpath in glob.glob(glob_pattern):
+            bl_name = os.path.split(fpath)[-1].replace('.blacklist', '')
+            with open(fpath) as fd:
+                data = fd.read()
+                if '\n' in data:
+                    data = data.replace('\r', '')
+                else:
+                    data = data.replace('\r', '\n')
+                self.blacklists[bl_name] = set(filter(None, data.split('\n')))
+        print "Loaded blacklists: {0}".format(', '.join(self.blacklists.keys()))
+
+    def get_blacklist_names(self):
+        return self.blacklists.keys()
+
+    def match(self, address):
+        """ Simple exact matcher that generates matching black list names. """
+        for bl_name, entries in self.blacklists.items():
+            if urlparse(address).netloc in entries:
+                yield bl_name
+            else:
+                try:
+                    domain = get_tld(address)
+                    if domain in entries:
+                        yield bl_name
+                except Exception as exc:
+                    # This might generate a lot of error messages.
+                    print "error:", exc
+
 class Analyzer(object):
     def __init__(self):
         self.custom_whitelist = set(Whitelist.objects.values_list('pattern', flat=True))
         self.alexa_whitelist = set(line.strip() for line in open(os.path.join(sys.path[0],'alexa-50k-whitelist.csv'), 'r'))
+        self.blacklists = None
+        if settings.ENABLE_BLACKLISTS:
+            self.blacklists = Blacklists()
 
     def check_whitelist(self, uri):
 
@@ -54,6 +98,20 @@ class Analyzer(object):
         alerts["HIDDEN ELEMENT"] = self.get_hidden_iframes(search_start_time)
         alerts["PROFILING SCRIPT"] = self.get_cart_id_injections(search_start_time)
         alerts["SCANBOX FRAMEWORK"] = self.get_scanbox_injections(search_start_time)
+
+        for bl_name in self.blacklists.get_blacklist_names():
+            alerts["BLACKLIST " + bl_name] = []
+
+        # If we have blacklists enabled, check all elements.
+        if self.blacklists:
+            elements = self.get_all_elements(search_start_time)
+            for elem in elements:
+                uri = elem.uri
+                if not uri:
+                    continue
+                for bl_name in self.blacklists.match(uri):
+                    print "{0} in blacklist {1}".format(uri, bl_name)
+                    alerts["BLACKLIST " + bl_name].append(elem)
 
         for alert in alerts:
             for elem in alerts[alert]:
@@ -85,6 +143,9 @@ class Analyzer(object):
                     infected_page_url = infected_page.uri
                 a = Alert(reason=alert, raw=elem.raw, uri=elem.uri, page=infected_page_url, page_id=elem.page_id, org_id=elem.org_id, event_time=elem.event_time)
                 a.save()
+
+    def get_all_elements(self, search_start_time):
+        return Element.objects.filter(Q(event_time__gte=search_start_time))
 
     def get_hidden_iframes(self, search_start_time):
         iframes = Element.objects.filter(Q(attr_width='0') | Q(attr_width='1') | Q(attr_height='0') | Q(attr_height='1'), Q(event_time__gte=search_start_time), Q(tag_name="iframe") | Q(tag_name='object') | Q(tag_name='embed')).exclude(uri__isnull=True).exclude(uri='')
