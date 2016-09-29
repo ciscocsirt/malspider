@@ -52,6 +52,7 @@ Malspider comes with a **quick_install** script found in the root directory. Thi
  
 **Note**: _The quick_install script uses scripts found under the **install/** directory. If any of the above steps fail you can attempt to complete them manually using those scripts._
 
+**Note**: _If you need a permanent or production installation of Malspider, please consider using Apache as your webserver. Production instlalation instructions will be released soon._
 
 ### (Quick) Start
 -------------
@@ -98,12 +99,6 @@ In the **malspider/settings.py** file you'll find a "PAGES_PER_DOMAIN" variable.
 PAGES_PER_DOMAIN = 20
 }
 ```
-
-### Analyzing Spider Data
-----
-Malspider crawls websites and stores information about those sites in a database. The data in the database is post-processed and analyzed for potentially malicious characteristics. You can view results from the analyzer by simply viewing the dashboard and clicking on "View Alerts".
-
-**NOTE**: _Crawl data is **analyzed once every 24 hours** (at midnight). This is scheduled by a cronjob. If you want to analyze the results more often you can **edit the crontab entry** that looks like this: 0 * * * * python your_path/manage.py analyzer_
 
 ### Tuning False Positives
 ----

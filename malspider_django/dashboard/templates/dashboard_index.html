@@ -93,7 +93,7 @@
                             <a href="/admin"><i class="fa fa-wrench fa-fw"></i>Admin Panel</a>
                         </li>
                         <li>
-                            <a href="{{my_url}}"><i class="fa fa-gears fa-fw"></i>Spider Daemon</a>
+                            <a href="/daemon"><i class="fa fa-gears fa-fw"></i>Spider Daemon</a>
                         </li>
                         <li>
                             <a href="#"><i class="fa fa-bell fa-fw"></i>View Alerts<span class="fa arrow"></span></a>
@@ -127,6 +127,21 @@
         </nav>
 
         <div id="page-wrapper">
+        {% if jobid %}
+            <div class="row">
+               <div class="col-log-12 alert alert-success">
+                   Scanning {{ scan_domain }}. <br/>
+                   Daemon job id: <a href="/daemon/{{ jobid }}">{{jobid}}</a><br/>
+               </div>
+	    </div>
+        {% elif error %}
+            <div class="row">
+               <div class="col-log-12 alert alert-danger">
+                   {{ error }}
+               </div>
+	    </div>
+        {% endif %}
+
             <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header">Dashboard</h1>
@@ -241,11 +256,12 @@
                                             <th>Organization</th>
                                             <th>Category</th>
                                             <th>Domain</th>
+					    <th>Adhoc Scan</th>
                                         </tr>
                                     </thead>
                                     <tbody>
 		    		{% for org in all_orgs %}
-					<tr><td>{{ org.org_name }}</td><td>{{org.category}}</td><td><a href="/org/{{org.id}}">{{org.domain}}</a></td></tr>
+					<tr><td>{{ org.org_name }}</td><td>{{org.category}}</td><td><a href="/org/{{org.id}}">{{org.domain}}</a></td><td align="center"><div class="btn-group"><form action="/scan/{{org.id}}"><button class="btn btn-success btn-sm" role="link" type="submit">Scan</button></form></td></tr>
 		    		{% endfor %}
 				    </tbody>
 				</table>
@@ -283,7 +299,7 @@
                                 </a>
                             </div>
                             <!-- /.list-group -->
-                            <a href="{{ my_url }}" class="btn btn-default btn-block">View Daemon</a>
+                            <a href="/daemon" class="btn btn-default btn-block">View Daemon</a>
                         </div>
                         <!-- /.panel-body -->
                     </div>

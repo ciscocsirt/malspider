@@ -111,9 +111,3 @@ STATIC_URL = '/static/'
 CRAWL_PROJECT_NAME = "malspider"
 CRAWL_SPIDER_NAME = "full_domain"
 CRAWL_SCRAPYD_URL = "http://0.0.0.0:6802"
-
-ENABLE_EMAIL_ALERTS = False
-
-# Blacklist settings.
-ENABLE_BLACKLISTS = True
-BLACKLIST_DIRECTORY = os.path.join(BASE_DIR, 'blacklists')

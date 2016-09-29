@@ -44,3 +44,11 @@ class WebPage(Item):
     ssdeep_pagesource = Field()
     num_onsite_links = Field()
     num_offsite_links = Field()
+
+class Alert(Item):
+    reason = Field()
+    raw = Field()
+    uri = Field()
+    page = Field()
+    page_id = Field()
+    org_id = Field()

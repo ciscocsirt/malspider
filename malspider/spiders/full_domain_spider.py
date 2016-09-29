@@ -6,7 +6,10 @@
 #  LICENSE file in the root directory of this source tree. 
 #
 
+import yara
 import scrapy
+import MySQLdb
+import pkgutil
 from scrapy import log
 from scrapy import Selector
 from scrapy.http import Request
@@ -16,10 +19,16 @@ from scrapy.contrib.spiders import CrawlSpider,Rule
 from malspider import settings
 from bson.objectid import ObjectId
 
-from malspider.parser.LinkParser import LinkParser
+#from malspider.parser.LinkParser import LinkParser
+#from malspider.parser.DomParser import DomParser
+#from malspider.analyzer.URLClassifier import URLClassifier
+#from malspider.analyzer.DomInspector import DomInspector
+from malspider.analysis.Analyzer import Analyzer
+from scrapy import signals
+from scrapy.xlib.pydispatch import dispatcher
 from urlparse import urlparse
-
 from malspider.items import WebPage
+from malspider.items import Alert
 
 class FullDomainSpider(CrawlSpider):
     name = settings.BOT_NAME
@@ -31,66 +40,66 @@ class FullDomainSpider(CrawlSpider):
         self.allowed_domains = kwargs.get('allowed_domains').split(',')
         self.org = kwargs.get('org')
         self.start_urls = kwargs.get('start_urls').split(',')
+        dispatcher.connect(self.spider_opened, signals.spider_opened)
+        dispatcher.connect(self.spider_closed, signals.spider_closed)
+
+    def spider_opened(self, spider):
+        self.conn = MySQLdb.connect(host=settings.MYSQL_HOST, db=settings.MYSQL_DB, user=settings.MYSQL_USER, passwd=settings.MYSQL_PASSWORD, charset='utf8', use_unicode=True)
+        cursor = spider.conn.cursor()
+        sql_str = "SELECT pattern from whitelist"
+        cursor.execute(sql_str)
+        self.custom_whitelist = cursor.fetchall()
+        try:
+            alexa_whitelist_file = pkgutil.get_data("malspider", "resources/alexa-1k-whitelist.csv").decode('ascii')
+            self.alexa_whitelist = alexa_whitelist_file.splitlines()
+        except:
+            log.msg("Error loading alexa whitelist...", level=log.ERROR)
+
+    def spider_closed(self, spider):
+        try:
+            self.conn.close()
+        except:
+            los.msg("Could not close database connection", level=log.ERROR)
 
     def process_value(self,value):
         return value
 
     def start_requests(self):
         for url in self.start_urls:
-            yield WebdriverRequest(url, callback=self.parse_item)
+            yield WebdriverRequest(url, callback=self.parse_response)
  
-    def parse_item(self, response):
-        sel = Selector(response)
-        items = LinkParser.extract_page_links(sel)
-        num_onsite_links = 0
-        num_offsite_links = 0
-
+    def parse_response(self, response):
         page_id = ObjectId()
 
-        for item in items:
-            item['page_id'] = page_id
-            item['domain'] = ""
-            item['org_id'] = self.org
-            item['referer'] = response.meta.get('Referer')
+        analyzer = Analyzer(response)
+        alerts = analyzer.inspect_response()
+        elems = analyzer.get_resource_elems()
+        page = analyzer.get_page_info()
 
-            if 'uri' in item:
-                parse_uri = urlparse(item['uri'])
-                item['domain'] = parse_uri[1]
+        for alert in alerts:
+            yield alert
 
-            item['onsite'] = False
-            for dom in self.allowed_domains:
-                if item['domain'] == "" or item['domain'] in dom:
-                    item['onsite'] = True
-                    num_onsite_links = num_onsite_links + 1
+        for elem in elems:
+            elem['page_id'] = page_id
+            elem['org_id'] = self.org
+            yield elem
 
-            if item['onsite'] == False:
-                num_offsite_links = num_offsite_links + 1
-
-            yield item
-
-        page = LinkParser.get_page_data(response)
         page['page_id'] = page_id
-        page['useragent'] = response.meta.get('User-Agent')
-        page['referer'] = response.meta.get('Referer')
         page['org_id'] = self.org
-        page['num_offsite_links'] = num_offsite_links
-        page['num_onsite_links'] = num_onsite_links
-
         yield page
 
         #limit page depth
         if self.pages_crawled >= settings.PAGES_PER_DOMAIN:
             return
 
-        for link in LxmlLinkExtractor(unique=True, allow_domains=self.allowed_domains).extract_links(response):
+        for link in LxmlLinkExtractor(unique=True, deny_extensions=list(), allow_domains=self.allowed_domains).extract_links(response):
             if not link.url in self.already_crawled and self.pages_crawled <= settings.PAGES_PER_DOMAIN:
                 self.already_crawled.add(link.url)
                 self.pages_crawled = self.pages_crawled + 1
-                print "yielding request for ", link.url
-                yield WebdriverRequest(link.url, callback=self.parse_item)
+                log.msg("Yielding request for " + link.url, level=log.INFO)
+                yield WebdriverRequest(link.url, callback=self.parse_response)
             elif self.pages_crawled >= settings.PAGES_PER_DOMAIN:
-                print "reached max crawl"
+                log.msg("Reached max crawl depth: " + str(settings.PAGES_PER_DOMAIN), level=log.INFO)
                 return
             else:
-                print "avoiding duplicate request for: ", link.url
-
+                log.msg("avoiding duplicate request for: " + link.url, level=log.INFO)

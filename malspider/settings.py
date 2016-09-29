@@ -18,8 +18,9 @@ ROBOTSTXT_OBEY = False
 USER_AGENT = 'Mozilla/5.0 (Android; Tablet; rv:30.0) Gecko/30.0 Firefox/30.0'
 
 ITEM_PIPELINES = {
-        'malspider.pipelines.DuplicateFilterPipeline': 800,
-        'malspider.pipelines.MySQLPipeline':900,
+        'malspider.pipelines.DuplicateFilterPipeline.DuplicateFilterPipeline': 800,
+        'malspider.pipelines.WhitelistFilterPipeline.WhitelistFilterPipeline': 850,
+        'malspider.pipelines.MySQLPipeline.MySQLPipeline':900,
 }
 
 #screenshots

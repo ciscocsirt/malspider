@@ -1,1 +1,2 @@
 include malspider/resources/useragents.txt
+include malspider/resources/alexa-1k-whitelist.csv

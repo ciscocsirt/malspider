@@ -26,7 +26,7 @@ class ModelQuery:
         try:
             org_obj = Organization.objects.get(id=org_id)
             return org_obj
-        except ObjectDoesNotExist:
+        except:
             return None
 
     @staticmethod

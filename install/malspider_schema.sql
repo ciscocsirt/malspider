@@ -21,7 +21,7 @@ CREATE TABLE `alert` (
   `reason` varchar(250) NOT NULL,
   `uri` varchar(1000) DEFAULT NULL,
   `raw` text,
-  `event_time` datetime NOT NULL,
+  `event_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `page_id` varchar(50) DEFAULT NULL,
   `org_id` int(11) DEFAULT NULL,
   `page` varchar(500) DEFAULT NULL,

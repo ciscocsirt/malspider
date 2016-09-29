@@ -23,21 +23,5 @@ class Command(BaseCommand):
         SM.cancel_all_jobs()
         orgs = Organization.objects.all()
         for org in orgs:
-            allowed_domains = ""
-            start_urls = ""
-            domain = org.domain
-           
-            if "www." in domain:
-                allowed_domains = domain + "," + domain[4:]
-                start_urls = 'https://' + domain + ',https://' + domain[4:] + ',http://' + domain + ',http://' + domain[4:]
-            else:
-                allowed_domains = domain + ",www." + domain
-                start_urls = 'https://www.' + domain + ',https://' + domain + ',http://' + domain + ',http://www.' + domain
-
-            crawl_params = {
-                    "org": org.id,
-                    "allowed_domains": allowed_domains,
-                    "start_urls": start_urls,
-            }
-            print "Adding ", org.domain, " to the queue..."
-            SM.schedule_job(crawl_params)
+            print "Scheduling job for ", org.domain
+            SM.schedule_job(org.id, org.domain)

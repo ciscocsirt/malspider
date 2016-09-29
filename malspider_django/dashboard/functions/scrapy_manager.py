@@ -73,9 +73,21 @@ class ScrapyManager():
             else:
                 print "could not cancel job ", job, " for project '", project, "'"
 
-    def schedule_job(self, params):
+    def schedule_job(self, org_id, domain):
+        if "www." in domain:
+            allowed_domains = domain + "," + domain[4:]
+            start_urls = 'https://' + domain + ',https://' + domain[4:] + ',http://' + domain + ',http://' + domain[4:] 
+        else:
+            allowed_domains = domain + ",www." + domain
+            start_urls = 'https://www.' + domain + ',https://' + domain + ',http://' + domain + ',http://www.' + domain
+
+        params = {}
         params['spider'] = self.spider_name
         params['project'] = self.project_name
+        params['allowed_domains']  = allowed_domains
+        params['start_urls'] = start_urls
+        params['org'] = org_id
+        params['domain'] = domain
         req  = urllib2.Request(self.scrapyd_url+"/schedule.json", urllib.urlencode(params))
         response = urllib2.urlopen(req)
         return json.load(response)

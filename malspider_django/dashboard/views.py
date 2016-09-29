@@ -17,7 +17,7 @@ from dashboard.functions.model_helper import ModelQuery
 from dashboard.functions.scrapy_manager import ScrapyManager
 from urlparse import urlparse
 
-def index(request):
+def index(request, org_id=None):
     SM = ScrapyManager("malspider", "full_domain", "http://0.0.0.0:6802")
     crawl_jobs = SM.get_all_jobs_by_project()
     pending_jobs = 0
@@ -40,13 +40,39 @@ def index(request):
     template = loader.get_template('dashboard_index.html')
     all_orgs = ModelQuery.get_all_organizations()
     top_offenders = ModelQuery.get_top_offenders()
-    my_url = urlparse(request.get_full_path()).hostname or ''
-    if my_url == '':
-        scrapyd_url = 'http://localhost:6802'
-    else:
-        scrapyd_url = my_url + ":6802"
 
-    context = RequestContext(request, {'elems_count':elems_count,'pages_count':pages_count, 'pending_jobs':pending_jobs, 'running_jobs':running_jobs, 'finished_jobs':finished_jobs, 'unique_alerts':unique_alerts, 'alert_count_by_reason':alert_count_by_reason, 'all_orgs':all_orgs, 'top_offenders':top_offenders, 'scrapyd_connected':scrapyd_connected, 'my_url':scrapyd_url})
+    org_obj = ModelQuery.get_org_by_id(org_id)
+    jobid = None
+    scan_domain = None
+    error = None
+    if org_obj:
+        output = SM.schedule_job(org_id,org_obj.domain)
+        if 'jobid' in output:
+            jobid = output['jobid']
+            scan_domain = org_obj.domain
+    elif org_obj is None and org_id is not None:
+        error = "Error: Invalid Organization ID!"
+
+    context = RequestContext(request, {'elems_count':elems_count,'pages_count':pages_count, 'pending_jobs':pending_jobs, 'running_jobs':running_jobs, 'finished_jobs':finished_jobs, 'unique_alerts':unique_alerts, 'alert_count_by_reason':alert_count_by_reason, 'all_orgs':all_orgs, 'top_offenders':top_offenders, 'scrapyd_connected':scrapyd_connected, 'jobid':jobid,'scan_domain':scan_domain, 'error':error})
+    return HttpResponse(template.render(context))
+
+def daemon(request, jobid=None):
+    SM = ScrapyManager("malspider", "full_domain", "http://0.0.0.0:6802")
+    crawl_jobs = SM.get_all_jobs_by_project()
+    pending_jobs = []
+    running_jobs = []
+    finished_jobs = []
+    scrapyd_connected = []
+
+    crawl_jobs = SM.get_all_jobs_by_project()
+    if crawl_jobs is not None:
+        pending_jobs = crawl_jobs['pending']
+        running_jobs = crawl_jobs['running']
+        finished_jobs = crawl_jobs['finished']
+        scrapyd_connected = 1
+
+    context = RequestContext(request, {'finished_jobs':finished_jobs, 'pending_jobs':pending_jobs, 'running_jobs':running_jobs, 'status':scrapyd_connected, 'jobid':jobid})
+    template = loader.get_template("dashboard_daemon.html")
     return HttpResponse(template.render(context))
 
 def pages(request, time_frame="last_24_hours"):

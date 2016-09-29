@@ -18,6 +18,7 @@ from django.contrib import admin
 from dashboard.views import index
 from dashboard.views import pages
 from dashboard.views import page
+from dashboard.views import daemon
 
 
 admin.autodiscover()
@@ -29,7 +30,10 @@ admin.autodiscover()
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', index),
+    url(r'^scan/(?P<org_id>\w+)/$',index),
     url(r'^alerts/$',pages),
     url(r'^alerts/(?P<time_frame>\w+)/$',pages),
     url(r'^org/(?P<org_id>\w+)/$',page),
+    url(r'^daemon/$',daemon),
+    url(r'^daemon/(?P<jobid>\w+)/$',daemon),
 ]
