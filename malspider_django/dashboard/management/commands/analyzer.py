@@ -61,7 +61,7 @@ class Blacklists(object):
                         yield bl_name
                 except Exception as exc:
                     # This might generate a lot of error messages.
-                    print "error:", exc
+                    pass
 
 class Analyzer(object):
     def __init__(self):
@@ -99,18 +99,17 @@ class Analyzer(object):
         alerts["PROFILING SCRIPT"] = self.get_cart_id_injections(search_start_time)
         alerts["SCANBOX FRAMEWORK"] = self.get_scanbox_injections(search_start_time)
 
-        for bl_name in self.blacklists.get_blacklist_names():
-            alerts["BLACKLIST " + bl_name] = []
-
         # If we have blacklists enabled, check all elements.
         if self.blacklists:
+            for bl_name in self.blacklists.get_blacklist_names():
+                alerts["BLACKLIST " + bl_name] = []
+
             elements = self.get_all_elements(search_start_time)
-            for elem in elements:
+            for elem in elements.iterator():
                 uri = elem.uri
                 if not uri:
                     continue
                 for bl_name in self.blacklists.match(uri):
-                    print "{0} in blacklist {1}".format(uri, bl_name)
                     alerts["BLACKLIST " + bl_name].append(elem)
 
         for alert in alerts:
