@@ -18,7 +18,7 @@ class HTMLClassifier:
     @staticmethod
     def scan(html):
         alerts = list()
-        matches = HTMLClassifier.yara_rules.match(data=html)
+        matches = HTMLClassifier.yara_rules.match(data=html.encode('ascii', 'ignore'))
         if not len(matches) > 0:
             return alerts
 

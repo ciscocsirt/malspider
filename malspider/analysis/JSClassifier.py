@@ -18,7 +18,7 @@ class JSClassifier:
     @staticmethod
     def scan(js):
         alerts = list()
-        matches = JSClassifier.yara_rules.match(data=js)
+        matches = JSClassifier.yara_rules.match(data=js.encode('ascii', 'ignore'))
         if not len(matches) > 0:
             return alerts
 

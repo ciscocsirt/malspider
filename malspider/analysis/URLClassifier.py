@@ -18,7 +18,7 @@ class URLClassifier:
     @staticmethod
     def scan(uri):
         alerts = list()
-        matches = URLClassifier.yara_rules.match(data=uri)
+        matches = URLClassifier.yara_rules.match(data=uri.encode('ascii', 'ignore'))
         if not len(matches) > 0:
             return alerts
 
