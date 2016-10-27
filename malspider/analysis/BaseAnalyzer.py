@@ -5,7 +5,7 @@
 #  LICENSE file in the root directory of this source tree. 
 #
 
-
+import ssdeep
 from malspider.analysis.parse.DomParser import DomParser
 from malspider.items import Alert
 from malspider.items import PageLink
