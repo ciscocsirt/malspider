@@ -5,10 +5,12 @@
 #  LICENSE file in the root directory of this source tree. 
 #
 
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.middleware import get_user
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext, loader
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render, render_to_response
 from dashboard.models import Page
 from dashboard.models import Element
 from dashboard.models import Organization
@@ -16,6 +18,33 @@ from django.conf import settings
 from dashboard.functions.model_helper import ModelQuery
 from dashboard.functions.scrapy_manager import ScrapyManager
 from urlparse import urlparse
+from .forms import LoginForm
+from django.template import RequestContext
+from django.views.decorators.csrf import csrf_protect
+
+@csrf_protect
+def login_view(request):
+    msg = None
+    if request.method == "POST":
+        form = LoginForm(request.POST) 
+        if form.is_valid():
+            uname = form.cleaned_data['username']
+            pwd = form.cleaned_data['password']
+            user = authenticate(username=uname, password=pwd)
+            if user:
+                login(request,user)
+                return HttpResponseRedirect("/") 
+            else:
+                msg = "Authentication Failed!"
+    else:
+        form = LoginForm()
+
+    template = loader.get_template("dashboard_login.html")
+    return HttpResponse(template.render({'form': form, 'msg':msg}, request))
+
+def logout_view(request):
+    logout(request)
+    return HttpResponseRedirect("/login/")
 
 def index(request, org_id=None):
     SM = ScrapyManager("malspider", "full_domain", "http://0.0.0.0:6802")

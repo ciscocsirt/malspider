@@ -12,10 +12,10 @@ install_dependencies()
 
 	dist=`grep '^ID=' /etc/*-release | awk -F '=' '{print $2}'`
 	if [ "$dist" = "ubuntu" ] || [ "$dist" = "\"ubuntu\"" ]; then
-		sudo apt-get -y install python-pip python-dev libssl-dev libxml2-dev libxslt-dev libmysqlclient-dev libffi-dev libtool autoconf phantomjs
+		sudo apt-get -y install python-pip python-dev libssl-dev libxml2-dev libxslt-dev libmysqlclient-dev libffi-dev libtool autoconf phantomjs libldap2-dev libsasl2-dev
 	elif [ "$dist" = "centos" ] || [ "$dist" = "\"centos\"" ]; then
 		sudo yum groupinstall "Development Tools"
-		sudo yum -y install python-pip python-devel openssl-devel libxml2-devel libxslt-devel libffi-devel libtool autoconf gcc gcc-c++ make flex bison gperf ruby freetype-devel fontconfig-devel libicu-devel sqlite-devel libpng-devel libjpeg-devel
+		sudo yum -y install python-pip python-devel openssl-devel libxml2-devel libxslt-devel libffi-devel libtool autoconf gcc gcc-c++ make flex bison gperf ruby freetype-devel fontconfig-devel libicu-devel sqlite-devel libpng-devel libjpeg-devel openldap-devel
 		sudo yum install -y mariadb-devel
 
 		sudo yum install -y freetype fontconfig

@@ -19,6 +19,8 @@ from dashboard.views import index
 from dashboard.views import pages
 from dashboard.views import page
 from dashboard.views import daemon
+from dashboard.views import login_view
+from dashboard.views import logout_view
 
 
 admin.autodiscover()
@@ -30,6 +32,8 @@ admin.autodiscover()
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', index),
+    url(r'^login/$', login_view),
+    url(r'^logout/$', logout_view),
     url(r'^scan/(?P<org_id>\w+)/$',index),
     url(r'^alerts/$',pages),
     url(r'^alerts/(?P<time_frame>\w+)/$',pages),

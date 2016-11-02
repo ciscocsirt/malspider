@@ -161,6 +161,38 @@ ENABLE_EMAIL_ALERTS = False
 
 Change "False" to "True".
 
+### LDAP Authentication (disabled by default)
+----
+If enabled, Malspider will present the user with a login screen requiring auth credentials to view content. To configure LDAP, open <root>/malspider_django/malspider_django/settings.py and uncomment (remove the '#') the two lines in AUTHENTICATION_BACKENDS. 
+
+```
+AUTHENTICATION_BACKENDS = (
+#    'django_auth_ldap.backend.LDAPBackend',
+#    'django.contrib.auth.backends.ModelBackend',
+)
+```
+
+Then edit the LDAP variables according to your environment. Here are some you should consider editing:
+
+```
+AUTH_LDAP_SERVER_URI = "ldap://example.com"
+
+AUTH_LDAP_BIND_DN = "cn=cnexample,OU=groups,OU=groups,DC=example,DC=com"
+AUTH_LDAP_BIND_PASSWORD = "<password>"
+AUTH_LDAP_USER_SEARCH = LDAPSearch("ou=group,dc=example,dc=com",
+    ldap.SCOPE_SUBTREE, "(cn=%(user)s)")
+
+# Set up the basic group parameters.
+AUTH_LDAP_GROUP_SEARCH = LDAPSearch("ou=groups,dc=example,dc=com",
+    ldap.SCOPE_SUBTREE, "(objectClass=groupOfNames)"
+)
+
+AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
+
+# Simple group restrictions
+#AUTH_LDAP_REQUIRE_GROUP = "cn=example2,ou=django,ou=groups,dc=example,dc=com"
+#AUTH_LDAP_DENY_GROUP = "cn=disabled,ou=django,ou=groups,dc=example,dc=com"
+``` 
 
 ### Database Purging
 ----

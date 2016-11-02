@@ -29,3 +29,5 @@ xattr==0.6.4
 zope.interface==4.1.3
 django-import-export
 yara
+python-ldap
+django_auth_ldap

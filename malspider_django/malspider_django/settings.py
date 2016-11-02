@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import ldap
+from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -24,7 +26,7 @@ DEBUG = True
 SECRET_KEY = '<REPLACE_THIS_DUMMY_KEY>'
 
 ALLOWED_HOSTS = []
-
+LOGIN_URL = '/login/'
 
 # Application definition
 
@@ -44,12 +46,13 @@ INSTALLED_APPS = (
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     #'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     #'django.middleware.security.SecurityMiddleware',
+    'malspider_django.middleware.LoginRequiredMiddleware.LoginRequiredMiddleware',
 )
 
 ROOT_URLCONF = 'malspider_django.urls'
@@ -111,3 +114,94 @@ STATIC_URL = '/static/'
 CRAWL_PROJECT_NAME = "malspider"
 CRAWL_SPIDER_NAME = "full_domain"
 CRAWL_SCRAPYD_URL = "http://0.0.0.0:6802"
+
+
+
+AUTHENTICATION_BACKENDS = (
+#    'django_auth_ldap.backend.LDAPBackend',
+#    'django.contrib.auth.backends.ModelBackend',
+)
+
+# Baseline configuration.
+AUTH_LDAP_SERVER_URI = "ldap://example.com"
+
+AUTH_LDAP_BIND_DN = "cn=cnexample,OU=groups,OU=groups,DC=example,DC=com"
+AUTH_LDAP_BIND_PASSWORD = "<password>"
+AUTH_LDAP_USER_SEARCH = LDAPSearch("ou=group,dc=example,dc=com",
+    ldap.SCOPE_SUBTREE, "(cn=%(user)s)")
+# or perhaps:
+# AUTH_LDAP_USER_DN_TEMPLATE = "uid=%(user)s,ou=users,dc=example,dc=com"
+
+# Set up the basic group parameters.
+AUTH_LDAP_GROUP_SEARCH = LDAPSearch("ou=groups,dc=example,dc=com",
+    ldap.SCOPE_SUBTREE, "(objectClass=groupOfNames)"
+)
+AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
+
+# Simple group restrictions
+#AUTH_LDAP_REQUIRE_GROUP = "cn=example2,ou=django,ou=groups,dc=example,dc=com"
+#AUTH_LDAP_DENY_GROUP = "cn=disabled,ou=django,ou=groups,dc=example,dc=com"
+
+# Populate the Django user from the LDAP directory.
+AUTH_LDAP_USER_ATTR_MAP = {
+    "first_name": "givenName",
+    "last_name": "sn",
+    "email": "mail"
+}
+
+#AUTH_LDAP_PROFILE_ATTR_MAP = {
+#    "employee_number": "employeeNumber"
+#}
+
+#AUTH_LDAP_USER_FLAGS_BY_GROUP = {
+#    "is_active": "cn=active,ou=django,ou=groups,dc=example,dc=com",
+#    "is_staff": "cn=staff,ou=django,ou=groups,dc=example,dc=com",
+#    "is_superuser": "cn=superuser,ou=django,ou=groups,dc=example,dc=com"
+#}
+
+#AUTH_LDAP_PROFILE_FLAGS_BY_GROUP = {
+#    "is_awesome": "cn=awesome,ou=django,ou=groups,dc=example,dc=com",
+#}
+
+# This is the default, but I like to be explicit.
+AUTH_LDAP_ALWAYS_UPDATE_USER = True
+
+# Use LDAP group membership to calculate group permissions.
+AUTH_LDAP_FIND_GROUP_PERMS = True
+
+# Cache group memberships for an hour to minimize LDAP traffic
+AUTH_LDAP_CACHE_GROUPS = True
+AUTH_LDAP_GROUP_CACHE_TIMEOUT = 3600
+
+AUTH_LDAP_CONNECTION_OPTIONS = {
+    ldap.OPT_DEBUG_LEVEL: 0,
+    ldap.OPT_REFERRALS: 0,
+}
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler'
+        },
+        'stream_to_console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler'
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'django_auth_ldap': {
+            'handlers': ['stream_to_console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    }
+}

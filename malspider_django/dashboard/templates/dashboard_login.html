@@ -1,0 +1,93 @@
+{% load humanize %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en" style="background-color: rgb(57,91,161);">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>MalSpider - Dashboard</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="{% static "bower_components/bootstrap/dist/css/bootstrap.min.css" %}" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="{% static "bower_components/font-awesome/css/font-awesome.min.css" %}" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+
+    <style>
+	.Absolute-Center {
+	  margin: auto;
+	  position: absolute;
+	  top: 0; left: 0; bottom: 0; right: 0;
+	}
+
+	.Absolute-Center.is-Responsive {
+	  width: 50%; 
+	  height: 50%;
+	  min-width: 200px;
+	  max-width: 400px;
+	  padding: 40px;
+	}
+
+	#logo-container{
+	  margin: auto;
+	  margin-bottom: 150px;
+	  width:325px;
+	  height:30px;
+	  font-size: 80px;
+	  color: white;
+	}
+       
+        .input-group-error {
+          color: orange;
+        }
+   </style>
+</head>
+    <body style="background-color: rgb(57,91,161);">
+	<div class="container">
+	  <div class="row">
+	    <div class="Absolute-Center is-Responsive">
+	      <div id="logo-container"><span style="color: orange;">Mal</span>spider</div>
+	      <div class="col-sm-12 col-md-10 col-md-offset-1">
+		<form action="/login/" method="post">
+		    {% csrf_token %}
+                    <div class="form-group input-group">
+            	      <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+		      <span class="input-group-error">{{form.username.errors}}</span>
+  		      {{form.username}}
+          	    </div>
+          	    <div class="form-group input-group">
+            	      <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+		      <span class="input-group-error">{{form.password.errors}}</span>
+		      {{form.password}}
+                    </div>
+                    <div class="form-group">
+                      <input type="submit" class="btn btn-def btn-block" value="Login" />
+		    </div>
+                    <div class="form-group"><center>
+			{% if msg %}
+			<span class="input-group-error">{{msg}}</span>
+			{% else %}
+			<span class="input-group-error">Please login to use Malspider!</span>
+			{% endif %}
+		    </center></div>
+                </form>
+	      </div>  
+	    </div>    
+	  </div>
+	</div>
+    </body>
+</html>
