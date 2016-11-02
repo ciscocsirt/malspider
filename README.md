@@ -194,6 +194,8 @@ AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
 #AUTH_LDAP_DENY_GROUP = "cn=disabled,ou=django,ou=groups,dc=example,dc=com"
 ``` 
 
+NOTE: For a more professional, production grade install, we recommend you setup Malspider with apache or nginx and use SSL.
+
 ### Database Purging
 ----
 The database can grow rather large very quickly. It is recommended that, for performance reasons, you delete data from the 'pages' table and the 'elements' table once per month... unless you have the storage space, of course. 
