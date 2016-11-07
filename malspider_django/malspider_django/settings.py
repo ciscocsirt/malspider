@@ -119,14 +119,14 @@ CRAWL_SCRAPYD_URL = "http://0.0.0.0:6802"
 
 AUTHENTICATION_BACKENDS = (
 #    'django_auth_ldap.backend.LDAPBackend',
-#    'django.contrib.auth.backends.ModelBackend',
+    'django.contrib.auth.backends.ModelBackend',
 )
 
 # Baseline configuration.
 AUTH_LDAP_SERVER_URI = "ldap://example.com"
 
 AUTH_LDAP_BIND_DN = "cn=cnexample,OU=groups,OU=groups,DC=example,DC=com"
-AUTH_LDAP_BIND_PASSWORD = "<password>"
+AUTH_LDAP_BIND_PASSWORD = "<your_password>"
 AUTH_LDAP_USER_SEARCH = LDAPSearch("ou=group,dc=example,dc=com",
     ldap.SCOPE_SUBTREE, "(cn=%(user)s)")
 # or perhaps:

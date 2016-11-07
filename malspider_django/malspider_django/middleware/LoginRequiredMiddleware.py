@@ -8,7 +8,7 @@ if hasattr(settings, 'LOGIN_EXEMPT_URLS'):
 
 class LoginRequiredMiddleware:
     def process_request(self, request):
-        if hasattr(settings, 'AUTHENTICATION_BACKENDS') and len(settings.AUTHENTICATION_BACKENDS) > 0:
+        if hasattr(settings, 'AUTHENTICATION_BACKENDS') and len(settings.AUTHENTICATION_BACKENDS) > 0 and 'django_auth_ldap.backend.LDAPBACKEND' in settings.AUTHENTICATION_BACKENDS:
             if not request.user.is_authenticated():
                 path = request.path_info.lstrip('/')
                 if not any(m.match(path) for m in EXEMPT_URLS):
