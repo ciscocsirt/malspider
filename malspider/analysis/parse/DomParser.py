@@ -50,12 +50,12 @@ class DomParser:
     def extract_hidden_elements(self):
         hidden_elems = []
         style_elems = self.sel.response.xpath("//style")
-        elems = self.sel.response.xpath("//*[not(self::img)][@src and (@width <= 1 or @height <= 1)]")
+        elems = self.sel.response.xpath("//*[not(self::img) and not(self::li) and not (self::td)][@src and (@width <= 1 or @height <= 1)]")
         for elem in elems:
            alert = [elem.xpath("@src").extract()[0], elem.extract(), elem]
            hidden_elems.append(alert)
         
-        elems = self.sel.response.xpath("//*[not(self::img)][@src or @href]")
+        elems = self.sel.response.xpath("//*[not(self::img) and not(self::li) and not (self::td)][@src or @href]")
         for elem in elems:
             elem_width = elem.xpath("@width").extract()
             elem_height = elem.xpath("@height").extract()
@@ -69,7 +69,7 @@ class DomParser:
             else:
                 resource = ""           
 
-            parent = elem.xpath("parent::*")
+            parent = elem.xpath("parent::*[not(self::img) and not(self::li) and not (self::td)]")
             parent_style = elem.xpath("parent::*[@style]/@style").extract()
             if parent_style and len(parent_style) > 0:
                 parent_height = re.findall(r"(?<![a-z]|\-)height\s*:\s*(-?\d+)", parent_style[0])
@@ -78,7 +78,7 @@ class DomParser:
                     alert = [resource, parent.extract()[0], parent]
                     hidden_elems.append(alert)
 
-            parent_class = elem.xpath("parent::*[@class]/@class")
+            parent_class = elem.xpath("parent::*[not(self::img) and not(self::li) and not (self::td)][@class]/@class")
             if parent_class and len(parent_class) > 0:
                 class_match = "(\\." + parent_class.extract()[0] + "\\s*\\w*\\s*\\{((?<={)[^}]*(?=}))\\})"
                 re_css_class = re.compile(class_match,re.IGNORECASE|re.DOTALL)

@@ -148,7 +148,7 @@
                                     <tbody>
 				{% if alerts %}
 		    		{% for alert in alerts %}
-					<tr><td class="text-danger">{{alert.reason}}</td><td>{{alert.page|truncatechars:75}}</td><td>{{alert.uris|linebreaksbr}}</td><td><button class="btn btn-warning" data-toggle="modal" data-target="#myModal_{{alert.id}}">Raw Code</button></td></tr>
+					<tr><td class="text-danger">{{alert.reason}}</td><td>{{alert.pages|linebreaksbr}}</td><td>{{alert.uris|linebreaksbr}}</td><td><button class="btn btn-warning" data-toggle="modal" data-target="#myModal_{{alert.id}}">Raw Code</button></td></tr>
 				<div class="modal fade" id="myModal_{{alert.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">

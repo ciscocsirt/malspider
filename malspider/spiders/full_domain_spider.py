@@ -77,6 +77,7 @@ class FullDomainSpider(CrawlSpider):
         page = analyzer.get_page_info()
 
         for alert in alerts:
+            alert['org_id'] = self.org
             yield alert
 
         for elem in elems:

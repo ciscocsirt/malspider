@@ -89,8 +89,7 @@ class ModelQuery:
 
         dt = dt.strftime('%d-%m-%Y %H:%M:%S')
 
-        sql = """Select id, GROUP_CONCAT(DISTINCT(reason) SEPARATOR '\n') reasons, GROUP_CONCAT(DISTINCT(uri) SEPARATOR '\n') uris, GROUP_CONCAT(DISTINCT(raw) SEPARATOR '\n') raws from alert WHERE event_time >= STR_TO_DATE('{0}','{1}') GROUP BY reason, page""".format(dt,"%%d-%%m-%%Y %%H:%%i:%%s")
-
+        sql = """Select id, GROUP_CONCAT(DISTINCT(reason) SEPARATOR '\n') reasons, GROUP_CONCAT(DISTINCT(page) SEPARATOR '\n') pages, GROUP_CONCAT(DISTINCT(uri) SEPARATOR '\n') uris, GROUP_CONCAT(DISTINCT(raw) SEPARATOR '\n') raws from alert WHERE event_time >= STR_TO_DATE('{0}','{1}') GROUP BY reason, org_id""".format(dt,"%%d-%%m-%%Y %%H:%%i:%%s")
         alerts = Alert.objects.raw(sql)
 
         return alerts

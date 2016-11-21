@@ -21,7 +21,9 @@ class DuplicateFilterPipeline(object):
             return item
 
         if 'raw' in item:
-            if item['raw'] in self.extracted_links:
+            if 'uri' in item and (item['uri'].startswith("#") or item['uri'].startswith("/")):
+                raise DropItem("Dropping same origin uri: ", item['uri'])
+            elif item['raw'] in self.extracted_links:
                 raise DropItem("Duplicate item found: ", item['raw'])
             else:
                 self.extracted_links.add(item['raw'])
