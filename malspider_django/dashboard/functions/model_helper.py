@@ -14,6 +14,7 @@ from dateutil.relativedelta import relativedelta
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.db.models import Count
+from django.db import connection
 
 class ModelQuery:
     @staticmethod
@@ -56,10 +57,14 @@ class ModelQuery:
 
     @staticmethod
     def get_num_unique_alerts():
-        all_alerts = ModelQuery.get_alerts_by_timeframe('all_time')
-        if all_alerts is not None:
-            return len(list(all_alerts))
-        return 0
+        try:
+            sql = """Select count(*) from alert GROUP BY reason, org_id""";
+            cursor = connection.cursor()
+            cursor.execute(sql)
+            row = cursor.fetchall()
+            return len(row)
+        except:
+            return 0
 
     @staticmethod
     def get_num_alerts_by_reason():
