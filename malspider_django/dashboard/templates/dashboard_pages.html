@@ -114,6 +114,11 @@
                             </ul>
                             <!-- /.nav-second-level -->
                         </li>
+                        <li>
+                           {% if user.is_authenticated %}
+                                <a href="/logout"><i class="fa fa-sign-out fa-fw"></i>Logout</a>
+                           {% endif %}
+                        </li>
                     </ul>
                 </div>
                 <!-- /.sidebar-collapse -->
