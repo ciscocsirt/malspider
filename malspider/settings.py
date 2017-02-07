@@ -66,3 +66,7 @@ MYSQL_PASSWORD = '<password>'
 # 0 = crawl only the home page (start urls)
 # X = crawl X pages beyond the home page
 PAGES_PER_DOMAIN = 20
+
+## This specifies, in seconds, how long to crawl a domain before timing out. This prevents the spider from hanging on a single domain.
+## NOTE: This will depend on how many pages you crawl per domain.
+DOMAIN_TIMEOUT = 60

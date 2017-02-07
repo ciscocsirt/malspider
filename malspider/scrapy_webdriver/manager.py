@@ -74,6 +74,7 @@ class WebdriverManager(object):
             options[cap_attr] = self._desired_capabilities
             self._webdriver = self._browser(**options)
             self._webdriver.set_window_size(settings.DRIVER_WINDOW_WIDTH, settings.DRIVER_WINDOW_HEIGHT)
+            self._webdriver.set_page_load_timeout(self.crawler.settings.get('DOMAIN_TIMEOUT', 30))
             self.crawler.signals.connect(self._cleanup, signal=engine_stopped)
         return self._webdriver
 
