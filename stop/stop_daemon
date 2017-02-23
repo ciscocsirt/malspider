@@ -1,0 +1,19 @@
+#!/bin/bash
+
+FAILURE=$(tput setaf 1)
+SUCCESS=$(tput setaf 2)
+INFO=$(tput setaf 3)
+WARNING=$(tput setaf 4)
+END=$(tput sgr0)
+
+stop_scrapy_daemon()
+{
+	printf "${INFO}Stopping the scrapyd process...${END}\n"
+	ps ax | grep 'scrapyd' | grep -v 'grep' | awk -F ' ' '{print $1}' | xargs sudo kill -9
+	if [ $? -ne 0 ]
+        then
+		printf "${FAILURE}Unable to kill the scrapyd process. It is running? Did you run this script with sudo privs?${END}\n"
+	fi
+}
+
+stop_scrapy_daemon

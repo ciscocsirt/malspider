@@ -1,0 +1,20 @@
+#!/bin/bash
+
+FAILURE=$(tput setaf 1)
+SUCCESS=$(tput setaf 2)
+INFO=$(tput setaf 3)
+WARNING=$(tput setaf 4)
+END=$(tput sgr0)
+
+
+stop_django_server() 
+{
+	printf "${INFO}Stopping the django development server...${END}\n"
+	ps ax | grep 'malspider_django/manage.py' | grep -v 'grep' | awk -F ' ' '{print $1}' | xargs sudo kill -9
+        if [ $? -ne 0 ]
+        then
+                printf "${FAILURE}Unable to kill the django runserver process. Is it running? Did you run this script with sudo privs?${END}\n"
+        fi
+}
+
+stop_django_server

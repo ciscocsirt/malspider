@@ -1,0 +1,4 @@
+#!/bin/bash
+
+./stop/stop_daemon
+./stop/stop_server
