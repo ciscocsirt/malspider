@@ -14,7 +14,6 @@ from dateutil.relativedelta import relativedelta
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.db.models import Count
-from django.db import connection
 
 class ModelQuery:
     @staticmethod
@@ -41,6 +40,10 @@ class ModelQuery:
         return all_alerts
 
     @staticmethod
+    def get_alert_by_id(alert_id):
+        return Alert.objects.filter(id=alert_id).first()
+
+    @staticmethod
     def get_page_by_id(page_id):
         if page_id:
             page_obj = Pages.objects(id=ObjectId(page_id))
@@ -57,14 +60,10 @@ class ModelQuery:
 
     @staticmethod
     def get_num_unique_alerts():
-        try:
-            sql = """Select count(*) from alert GROUP BY reason, org_id""";
-            cursor = connection.cursor()
-            cursor.execute(sql)
-            row = cursor.fetchall()
-            return len(row)
-        except:
-            return 0
+        all_alerts = ModelQuery.get_alerts_by_timeframe('all_time')
+        if all_alerts is not None:
+            return len(list(all_alerts))
+        return 0
 
     @staticmethod
     def get_num_alerts_by_reason():
@@ -94,7 +93,8 @@ class ModelQuery:
 
         dt = dt.strftime('%d-%m-%Y %H:%M:%S')
 
-        sql = """Select id, GROUP_CONCAT(DISTINCT(reason) SEPARATOR '\n') reasons, GROUP_CONCAT(DISTINCT(page) SEPARATOR '\n') pages, GROUP_CONCAT(DISTINCT(uri) SEPARATOR '\n') uris, GROUP_CONCAT(DISTINCT(raw) SEPARATOR '\n') raws from alert WHERE event_time >= STR_TO_DATE('{0}','{1}') GROUP BY reason, org_id""".format(dt,"%%d-%%m-%%Y %%H:%%i:%%s")
+        sql = """Select id, GROUP_CONCAT(DISTINCT(id) SEPARATOR '\n') alert_ids, GROUP_CONCAT(DISTINCT(reason) SEPARATOR '\n') reasons, GROUP_CONCAT(DISTINCT(uri) SEPARATOR '\n') uris, GROUP_CONCAT(DISTINCT(raw) SEPARATOR '\n') raws from alert WHERE event_time >= STR_TO_DATE('{0}','{1}') GROUP BY reason, page""".format(dt,"%%d-%%m-%%Y %%H:%%i:%%s")
+
         alerts = Alert.objects.raw(sql)
 
         return alerts

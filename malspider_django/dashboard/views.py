@@ -5,6 +5,7 @@
 #  LICENSE file in the root directory of this source tree. 
 #
 
+import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.middleware import get_user
 from django.shortcuts import render
@@ -13,7 +14,9 @@ from django.template import RequestContext, loader
 from django.shortcuts import get_object_or_404, render, render_to_response
 from dashboard.models import Page
 from dashboard.models import Element
+from dashboard.models import Alert
 from dashboard.models import Organization
+from dashboard.models import Whitelist
 from django.conf import settings
 from dashboard.functions.model_helper import ModelQuery
 from dashboard.functions.scrapy_manager import ScrapyManager
@@ -121,4 +124,38 @@ def page(request, org_id):
         context = RequestContext(request, {'error':'Could not find any analysis for this page id'})
 
     template = loader.get_template('dashboard_page.html')
-    return HttpResponse(template.render(context))
+    return httpresponse(template.render(context))
+
+# false positive view
+def fp_view(request):
+    if request.method == "GET":
+        return HttpResponse(json.dumps({"Invalid Request"}, content_type="application/json"))
+    else:
+	alert_ids = request.POST.get("alert_ids")
+	whitelist_pattern = request.POST.get("whitelist_pattern")
+        count = 0
+	my_alert = ""
+	if alert_ids:
+		alert_ids = alert_ids.split("\r\n")
+		for alert_id in alert_ids:
+			if request.POST.get("remove") == "remove_all":
+				alert = Alert.objects.filter(id=alert_id).first()
+				if alert:
+					alert_uri = alert.uri
+					alert_one = Alert.objects.filter(id=alert_id).delete()
+					alert_two = Alert.objects.filter(uri=alert_uri).delete()
+					wlp = Whitelist(pattern=alert_uri)
+					wlp.save()
+			else:
+				Alert.objects.filter(id=alert_id).delete()
+	if whitelist_pattern:
+		try:
+			wlp = Whitelist(pattern=whitelist_pattern)
+			wlp.save()
+		except:
+			pass
+		
+
+			
+	response_data = {"msg":"ok"}
+        return HttpResponse(json.dumps(response_data), content_type="application/json")

@@ -21,13 +21,9 @@ from dashboard.views import page
 from dashboard.views import daemon
 from dashboard.views import login_view
 from dashboard.views import logout_view
-
+from dashboard.views import fp_view
 
 admin.autodiscover()
-
-#urlpatterns = [
-#    url(r'^admin/', include(admin.site.urls)),
-#]
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
@@ -37,6 +33,7 @@ urlpatterns = [
     url(r'^scan/(?P<org_id>\w+)/$',index),
     url(r'^alerts/$',pages),
     url(r'^alerts/(?P<time_frame>\w+)/$',pages),
+    url(r'^fp$', fp_view),
     url(r'^org/(?P<org_id>\w+)/$',page),
     url(r'^daemon/$',daemon),
     url(r'^daemon/(?P<jobid>\w+)/$',daemon),

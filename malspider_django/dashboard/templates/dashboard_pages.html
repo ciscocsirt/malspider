@@ -60,6 +60,38 @@
     <!-- Custom Theme JavaScript -->
     <script src="{% static "dist/js/sb-admin-2.js" %}"></script>
 
+<script>
+$(document).ready(function() {
+	$("button").click(function() {
+   		button_id = String(this.id);
+   		if (button_id && button_id.startsWith("fpSubmit_")) {
+			btn_split = button_id.split("_");
+			if (btn_split.length == 2) {
+				frm_id = "#fpForm_" + btn_split[1];
+				frm_modal_id = "#fpModal_" + btn_split[1];
+				frm_data = $(frm_id).serialize();
+				$(frm_modal_id).find('.modal-body').html("<b>Processing! Please wait!</b><br/>This may take up to 1 minute on large datasets. This page will reload when finished.");
+				$(frm_modal_id).find('.modal-footer').html("");
+				$.ajax({
+					type: 'POST',
+					url: '/fp',
+					data: frm_data
+				})
+				.done(function(data) {
+					$(frm_modal_id).modal('toggle');
+					location.reload();
+				})
+				.fail(function() {
+					$(frm_modal_id).find('.modal-body').html("Error Processing Request!");
+				});
+
+			}
+		}
+
+	});
+});
+</script>
+
 </head>
 <body>
 
@@ -114,11 +146,6 @@
                             </ul>
                             <!-- /.nav-second-level -->
                         </li>
-                        <li>
-                           {% if user.is_authenticated %}
-                                <a href="/logout"><i class="fa fa-sign-out fa-fw"></i>Logout</a>
-                           {% endif %}
-                        </li>
                     </ul>
                 </div>
                 <!-- /.sidebar-collapse -->
@@ -153,7 +180,7 @@
                                     <tbody>
 				{% if alerts %}
 		    		{% for alert in alerts %}
-					<tr><td class="text-danger">{{alert.reason}}</td><td>{{alert.pages|linebreaksbr}}</td><td>{{alert.uris|linebreaksbr}}</td><td><button class="btn btn-warning" data-toggle="modal" data-target="#myModal_{{alert.id}}">Raw Code</button></td></tr>
+					<tr><td class="text-danger">{{alert.reason}}</td><td>{{alert.page|truncatechars:75}}</td><td>{{alert.uris|linebreaksbr}}</td><td><button class="btn btn-warning" data-toggle="modal" data-target="#myModal_{{alert.id}}">Raw Code</button><button class="btn btn-success" data-toggle="modal" data-target="#fpModal_{{alert.id}}">False Positive</button></td></tr>
 				<div class="modal fade" id="myModal_{{alert.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
@@ -163,6 +190,7 @@
                                         </div>
                                         <div class="modal-body">
                                             <code>{{alert.raws|linebreaksbr}}</code>
+					    <code>{{alert.alert_ids}}</code>
                                        </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -170,6 +198,57 @@
                                     </div>
                                     <!-- /.modal-content -->
                                 </div>
+				</div>
+                                <!-- /.modal-dialog -->
+				<div class="modal fade" id="fpModal_{{alert.id}}" tabindex="-1" role="dialog" aria-labelledby="myModal2" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title" id="myModal2">Is this a false positive?</h4>
+                                        </div>
+                                        <div class="modal-body" id="fpModalBody">
+					    <div class="container-fluid">
+
+						<form id="fpForm_{{alert.id}}" method="post">
+						<input type="hidden" name="alert_ids" id="alert_ids" value="{{alert.alert_ids}}">
+						<div class="row">
+							<div class="col-md-12"><b>Page:</b>  {{alert.page}}</div>
+						</div>
+						<div class="row" style="margin-bottom: 25px;"></div>
+						<div class="row">
+                                            		<div class="col-md-12"><code>{{alert.uris|linebreaksbr}}</code></div>
+						</div>
+						<div class="row" style="margin-bottom: 25px;"></div>
+						<div class="row">
+							<div class="col-md-12 form-group">
+            							<label for="whitelist_pattern" class="form-control-label">Whitelist Pattern (Optional)</label>
+								<p><b>Examples:</b> google.com, google, query_parameter</p> 
+            							<input type="text" class="form-control" id="whitelist_pattern" name="whitelist_pattern">
+          						</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12 form-group">
+							<input type="radio" name="remove" value="remove_all" checked="checked" /> Remove all instances of this false positve and don't show again<br>
+							<input type="radio" name="remove" value="remove_once" /> Remove this instance only<br>
+							</div>
+						</div>
+					        </form>
+					   </div>
+					</div>
+					<div class="modal-footer">		
+					   <div class="container-fluid">
+						<div class="row">
+                                              		<div class="col-md-12">
+							<button id="fpSubmit_{{alert.id}}" class="btn btn-success">Submit False Positive</button>
+                                              		</div>
+                                            	</div>
+					    </div>
+                                       </div>
+                                    </div>
+                                    <!-- /.modal-content -->
+                                </div>
+				</div>
                                 <!-- /.modal-dialog -->
 		    		{% endfor %}
 				{% else %}
