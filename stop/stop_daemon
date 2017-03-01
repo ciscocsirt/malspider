@@ -14,6 +14,7 @@ stop_scrapy_daemon()
         then
 		printf "${FAILURE}Unable to kill the scrapyd process. It is running? Did you run this script with sudo privs?${END}\n"
 	fi
+        ps ax | grep 'phantomjs' | grep -v 'grep' | awk -F ' ' '{print $1}' | xargs sudo kill -9
 }
 
 stop_scrapy_daemon
