@@ -124,7 +124,7 @@ def page(request, org_id):
         context = RequestContext(request, {'error':'Could not find any analysis for this page id'})
 
     template = loader.get_template('dashboard_page.html')
-    return httpresponse(template.render(context))
+    return HttpResponse(template.render(context))
 
 # false positive view
 def fp_view(request):
