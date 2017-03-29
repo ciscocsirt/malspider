@@ -6,6 +6,7 @@
 #
 
 import json
+import csv
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.middleware import get_user
 from django.shortcuts import render
@@ -159,3 +160,17 @@ def fp_view(request):
 			
 	response_data = {"msg":"ok"}
         return HttpResponse(json.dumps(response_data), content_type="application/json")
+
+
+def alert_export_view(request,time_frame="last_24_hours"):
+    response = HttpResponse(content_type="text/csv")
+    response['Content-Disposition'] = 'attachment; filename="malspider_alerts.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['alert_reason', 'source_page','requested_resource','raw_html'])
+
+    alerts = ModelQuery.get_alerts_by_timeframe(time_frame)
+    for alert in alerts:
+        writer.writerow([alert.reason,alert.page, alert.uri, unicode(alert.raw).encode("utf-8")])
+
+    return response

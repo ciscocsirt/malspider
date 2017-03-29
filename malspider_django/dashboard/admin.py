@@ -10,6 +10,11 @@ class OrganizationResource(resources.ModelResource):
         model = Organization
         import_id_fields = ['id',]
 
+class AlertResource(resources.ModelResource):
+    class Meta:
+        model = Alert
+        import_id_fields = ['id',]
+
 class WhitelistResource(resources.ModelResource):
     class Meta:
         model = Whitelist
@@ -19,9 +24,10 @@ class OrganizationAdmin(ImportExportModelAdmin):
     resource_class = OrganizationResource
     list_display = ('get_domain','get_org','get_category')
 
-class AlertAdmin(admin.ModelAdmin):
-    model = Alert
+class AlertAdmin(ImportExportModelAdmin):
+    resource_class = AlertResource
     list_display = ('get_time', 'get_reason', 'get_uri', 'get_raw')
+
 
 class WhitelistAdmin(ImportExportModelAdmin):
     resource_class = WhitelistResource
