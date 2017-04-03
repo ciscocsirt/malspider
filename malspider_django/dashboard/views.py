@@ -171,6 +171,6 @@ def alert_export_view(request,time_frame="last_24_hours"):
 
     alerts = ModelQuery.get_alerts_by_timeframe(time_frame)
     for alert in alerts:
-        writer.writerow([alert.reason,alert.page, alert.uri, unicode(alert.raw).encode("utf-8")])
+        writer.writerow([unicode(alert.reason).encode("utf-8"),unicode(alert.page).encode("utf-8"), unicode(alert.uri).encode("utf-8"), unicode(alert.raw).encode("utf-8")])
 
     return response
