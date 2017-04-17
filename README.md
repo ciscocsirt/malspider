@@ -152,14 +152,17 @@ SCREENSHOT_LOCATION = '<full_file_path>'
 ```
 Set TAKE_SCREENSHOT to _True_ and change _full_file_path_ to where you want the screenshots to be stored.
 
-### Enable Email Address Detection
-Email address detection can generate a lot of alerts. In some cases this is not the intended or desired effect so this feature is turned off by default.
 
-To turn on email alerts, open malspider_django/malspider_django/settings.py and locate this line:
+### Email Summary of Alerts
+----
+Turn on email summaries by opening the malspider_django/malspider_django/settings.py file, locating the email options (near the bottom of the file), uncommenting them (removing the preceding #) and supplying the appropriate values:
 
-ENABLE_EMAIL_ALERTS = False
+```
+EMAIL_HOST=""
+EMAIL_PORT=
+```
 
-Change "False" to "True".
+To create an email summary, Admin Panel -> Email Alerts -> Add Email Alert. Supply a subject line "ie. Malspider Email Summary", a list of recipients (separated by newline), and the email frequency (hourly, daily, weekly).
 
 ### LDAP Authentication (disabled by default)
 ----
