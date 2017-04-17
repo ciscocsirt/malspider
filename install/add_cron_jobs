@@ -10,13 +10,24 @@ cd ../
 
 scheduler="@daily python $PWD/malspider_django/manage.py manage_spiders"
 purge="#0 0 1 * * python $PWD/malspider_django/manage.py purge_db"
+email_hourly="@hourly python $PWD/malspider_django/manage.py email_alerts hourly"
+email_daily="0 8 * * * python $PWD/malspider_django/manage.py email_alerts daily"
+email_weekly="0 8 * * 7 python $PWD/malspider_django/manage.py email_alerts weekly"
 
 printf "${INFO}Adding the following entries to your crontab...${END}\n"
 printf "${INFO}$scheduler${END}\n"
 printf "${INFO}$purge${END}\n"
+printf "${INFO}$email_hourly${END}\n"
+printf "${INFO}$email_daily${END}\n"
+printf "${INFO}$email_weekly${END}\n"
+
 
 crontab -l > tempcron
 echo "$scheduler"  >> tempcron
 echo "$purge" >> tempcron
+echo "$email_hourly" >> tempcron
+echo "$email_daily" >> tempcron
+echo "$email_weekly" >> tempcron
+
 crontab tempcron
 rm tempcron

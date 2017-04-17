@@ -139,3 +139,16 @@ CREATE TABLE `whitelist` (
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+
+--
+-- Table structure for table `email_alerts`
+--
+DROP TABLE IF EXISTS `email_alert`;
+CREATE TABLE `email_alert` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `recipients` text,
+  `subject` varchar(250) NOT NULL,
+  `frequency` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

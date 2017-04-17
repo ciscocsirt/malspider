@@ -2,6 +2,7 @@ from django.contrib import admin
 from dashboard.models import Organization
 from dashboard.models import Alert
 from dashboard.models import Whitelist
+from dashboard.models import EmailAlert
 from import_export.admin import ImportExportModelAdmin
 from import_export import resources
 
@@ -33,6 +34,12 @@ class WhitelistAdmin(ImportExportModelAdmin):
     resource_class = WhitelistResource
     list_display = ('get_pattern',)
 
+class EmailAlertAdmin(admin.ModelAdmin):
+    model = EmailAlert
+    exclude = ('date_added', 'last_email')
+    list_display = ('get_recipients', 'get_subject', 'get_frequency')
+
 admin.site.register(Organization, OrganizationAdmin)
 admin.site.register(Alert, AlertAdmin)
 admin.site.register(Whitelist, WhitelistAdmin)
+admin.site.register(EmailAlert, EmailAlertAdmin)

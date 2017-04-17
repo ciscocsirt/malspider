@@ -134,3 +134,27 @@ class Whitelist(models.Model):
 
     def get_pattern(self):
         return self.pattern
+
+class EmailAlert(models.Model):
+    def __unicode__(self):
+        return self.subject
+    class Meta:
+        db_table = "email_alert"
+        verbose_name = 'Email Alert'
+        verbose_name_plural = 'Email Alerts'
+
+    subject = models.CharField(max_length=500)
+    recipients = models.TextField()
+    frequency = models.CharField(max_length=50, choices=[('hourly','hourly'),('daily','daily'), ('weekly','weekly')])
+
+    def get_subject(self):
+        return self.subject
+    get_subject.short_description = "Email Subject"
+
+    def get_recipients(self):
+        return self.recipients
+    get_recipients.short_description = "Email Recipient(s), separate with new line"
+
+    def get_frequency(self):
+        return self.frequency
+    get_frequency.short_description = "Alert Frequency"
