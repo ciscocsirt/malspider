@@ -2,7 +2,7 @@ attrs==15.2.0
 cffi
 cryptography==1.3.2
 cssselect==0.9.1
-Django==1.9.1
+Django==1.11.29
 enum34==1.1.5
 idna==2.1
 ipaddress==1.0.16
