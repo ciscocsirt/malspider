@@ -16,7 +16,7 @@ pyOpenSSL==0.13.1
 python-dateutil==2.5.3
 queuelib==1.4.2
 requests==2.7.0
-Scrapy==0.24.4
+Scrapy==1.8.2
 scrapyd==1.0.1
 selenium==2.45.0
 service-identity==16.0.0
