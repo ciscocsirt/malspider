@@ -22,7 +22,7 @@ selenium==2.45.0
 service-identity==16.0.0
 six==1.10.0
 tld==0.7.3
-Twisted==13.2.0
+Twisted==22.4.0
 urllib3==1.9
 w3lib==1.14.2
 xattr==0.6.4
